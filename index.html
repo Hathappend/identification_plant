@@ -2,177 +2,423 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Test AR Tanaman (Kamera Belakang)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>PlantLens AR</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    
     <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            background-color: #222; /* Gelap biar fokus ke kamera */
-            color: white;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 20px;
-            margin: 0;
-        }
-        h1 { margin-bottom: 10px; font-size: 1.2rem; }
-        
-        /* Container Kamera Responsif */
-        #webcam-container {
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-            margin-bottom: 20px;
-            width: 100%;
-            max-width: 400px; /* Batas lebar di HP */
-            background: #000;
-            display: flex;
-            justify-content: center;
-        }
-        canvas {
-            width: 100% !important; /* Paksa canvas ngikutin lebar layar HP */
-            height: auto !important;
+        :root {
+            --primary-color: #00d26a; /* Hijau modern */
+            --bg-dark: #0f172a;
+            --glass-bg: rgba(20, 20, 20, 0.6);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --text-color: #ffffff;
         }
 
-        #label-container {
-            width: 100%;
-            max-width: 400px;
-            background: #333;
-            padding: 15px;
-            border-radius: 10px;
-            box-sizing: border-box;
+        * { box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden; /* Mencegah scroll */
         }
-        .label-row {
+
+        /* --- LAYAR SAMBUTAN (Intro) --- */
+        #intro-screen {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 999;
+            transition: opacity 0.5s ease;
+        }
+
+        .logo-circle {
+            width: 80px; height: 80px;
+            background: rgba(0, 210, 106, 0.2);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            margin-bottom: 20px;
+            box-shadow: 0 0 20px rgba(0, 210, 106, 0.3);
+        }
+        .logo-text { font-size: 32px; }
+
+        h1 { margin: 0; font-weight: 600; letter-spacing: 1px; }
+        p.subtitle { color: #94a3b8; font-size: 14px; margin-top: 5px; }
+
+        #start-btn {
+            margin-top: 40px;
+            padding: 16px 40px;
+            background: var(--primary-color);
+            color: #000;
+            border: none;
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 210, 106, 0.4);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        #start-btn:active { transform: scale(0.95); }
+
+        #loading-text {
+            margin-top: 20px; color: var(--primary-color); font-size: 14px; display: none;
+        }
+
+        /* --- MAIN APP INTERFACE --- */
+        #app-screen {
+            display: none; /* Hidden default */
+            flex-direction: column;
+            height: 100%;
+            position: relative;
+        }
+
+        /* Header floating */
+        .app-header {
+            position: absolute;
+            top: 20px; left: 0; width: 100%;
+            text-align: center;
+            z-index: 10;
+            pointer-events: none;
+        }
+        .badge {
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            border: 1px solid var(--glass-border);
+        }
+
+        /* Area Kamera */
+        #webcam-wrapper {
+            flex: 1;
             display: flex;
             align-items: center;
-            margin-bottom: 8px;
+            justify-content: center;
+            position: relative;
+            background: #000;
         }
-        .label-name { width: 100px; font-size: 13px; }
-        .bar-container { flex-grow: 1; background: #555; height: 15px; border-radius: 8px; overflow: hidden; }
-        .bar-fill { height: 100%; background: #4CAF50; transition: width 0.2s; width: 0%; }
-        .percentage { width: 40px; text-align: right; font-size: 11px; margin-left: 5px; }
+
+        canvas {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Membuat video memenuhi layar */
+            display: block;
+        }
+
+        /* Animasi Scanner Garis */
+        .scan-overlay {
+            position: absolute;
+            top: 20%; left: 10%; right: 10%; bottom: 20%;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 20px;
+            pointer-events: none;
+            overflow: hidden;
+        }
+        .scan-line {
+            width: 100%; height: 2px;
+            background: var(--primary-color);
+            box-shadow: 0 0 10px var(--primary-color);
+            position: absolute;
+            top: 0;
+            animation: scanAnim 3s infinite linear;
+        }
+        @keyframes scanAnim {
+            0% { top: 0; opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { top: 100%; opacity: 0; }
+        }
+
+        /* --- HASIL (Bottom Sheet) --- */
+        #result-panel {
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            background: rgba(20, 20, 20, 0.85); /* Dark Glass */
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-top-left-radius: 25px;
+            border-top-right-radius: 25px;
+            padding: 25px 20px;
+            box-shadow: 0 -5px 30px rgba(0,0,0,0.5);
+            border-top: 1px solid var(--glass-border);
+            z-index: 20;
+            transform: translateY(100%); /* Sembunyi dulu */
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .result-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 15px;
+        }
+        .result-title { font-size: 14px; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px;}
         
-        button {
-            padding: 12px 25px; background-color: #007bff; color: white; border: none;
-            border-radius: 25px; font-size: 16px; cursor: pointer; margin-bottom: 20px;
-            width: 100%; max-width: 300px;
+        /* Bar Design */
+        .label-row { margin-bottom: 12px; }
+        .row-header { display: flex; justify-content: space-between; margin-bottom: 5px; }
+        .plant-name { font-size: 15px; font-weight: 600; color: #fff; text-transform: capitalize; }
+        .plant-perc { font-size: 13px; color: var(--primary-color); font-weight: bold; }
+        
+        .bar-bg {
+            width: 100%; height: 6px; background: rgba(255,255,255,0.1);
+            border-radius: 3px; overflow: hidden;
         }
-        .warning {
-            background: #ff9800; color: black; padding: 10px; font-size: 12px;
-            border-radius: 5px; margin-bottom: 15px; text-align: center; display: none;
+        .bar-fill {
+            height: 100%; background: var(--primary-color);
+            width: 0%; border-radius: 3px;
+            transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Warning */
+        #https-warning {
+            position: fixed; top: 0; left: 0; width: 100%; padding: 10px;
+            background: #e11d48; color: white; text-align: center;
+            font-size: 12px; z-index: 9999; display: none;
         }
     </style>
 </head>
 <body>
 
-    <h1>🌱 Deteksi Tanaman (Kamera Belakang)</h1>
-    
-    <div id="https-warning" class="warning">
-        ⚠️ PERHATIAN: Kamera mungkin tidak jalan jika dibuka lewat IP (http://192.168...).
-        Gunakan HTTPS (ngrok/vercel) atau localhost di laptop.
+    <div id="https-warning">⚠️ Akses kamera membutuhkan HTTPS / Localhost</div>
+
+    <div id="intro-screen">
+        <div class="logo-circle">
+            <span class="logo-text">🌿</span>
+        </div>
+        <h1>PlantLens</h1>
+        <p class="subtitle">AI Powered Identification</p>
+        
+        <button id="start-btn" onclick="startApp()">MULAI SCANNING</button>
+        <p id="loading-text">Memuat Model & Kamera...</p>
     </div>
 
-    <button type="button" onclick="init()">📸 Buka Kamera</button>
-    
-    <div id="webcam-container"></div>
-    <div id="label-container"></div>
+    <div id="app-screen">
+        <div class="app-header">
+            <span class="badge">Live Detection</span>
+        </div>
+
+        <div id="webcam-wrapper">
+            <div class="scan-overlay">
+                <div class="scan-line"></div>
+            </div>
+        </div>
+
+        <div id="result-panel">
+            <div class="result-header">
+                <span class="result-title">Hasil Deteksi</span>
+            </div>
+            <div id="label-container">
+                </div>
+        </div>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest/dist/teachablemachine-image.min.js"></script>
-    
-    <script type="text/javascript">
-        const URL = "./my_model/";
-        let model, webcam, labelContainer, maxPredictions;
 
-        async function init() {
+    <script>
+        // --- KONFIGURASI ---
+        const URL = "./my_model/"; 
+        const PREDICTION_DELAY = 500; 
+        // -------------------
+
+        let model, webcam, labelContainer, maxPredictions;
+        let isRunning = false;
+        let lastTime = 0;
+
+        window.onload = () => {
+            if (location.protocol !== 'https:' && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') {
+                document.getElementById('https-warning').style.display = 'block';
+            }
+        };
+
+        async function startApp() {
+            // UI Transition
+            const btn = document.getElementById('start-btn');
+            const loadText = document.getElementById('loading-text');
+            btn.style.display = 'none';
+            loadText.style.display = 'block';
+
             const modelURL = URL + "model.json";
             const metadataURL = URL + "metadata.json";
 
             try {
+                // 1. Load Model
                 model = await tmImage.load(modelURL, metadataURL);
                 maxPredictions = model.getTotalClasses();
             } catch (e) {
-                alert("Error: Model tidak ditemukan. Pastikan file json ada di folder yang sama.");
+                alert("Error: Folder 'my_model' tidak ditemukan!");
+                location.reload();
                 return;
             }
 
-            // --- BAGIAN INI YANG DIUBAH UTK KAMERA BELAKANG ---
-            const flip = false; // JANGAN dicerminkan untuk kamera belakang
+            // 2. Logic Auto-Detect Kamera Utama (Bukan Ultrawide)
+            const bestCameraId = await getBestBackCamera();
             
-            // Atur ukuran awal (nanti di-resize CSS)
-            const width = 300;
-            const height = 300;
+            // 3. Setup Webcam
+            // Tips: Kita set width height kecil agar enteng, 
+            // tapi diperbesar pakai CSS (object-fit) biar full screen.
+            const width = 300; 
+            const height = 300; 
+            const flip = false; 
             
             webcam = new tmImage.Webcam(width, height, flip); 
             
-            // Constraint khusus untuk meminta kamera belakang (environment)
             try {
-                await webcam.setup({ facingMode: "environment" }); 
+                if (bestCameraId) {
+                    await webcam.setup({ deviceId: { exact: bestCameraId } });
+                } else {
+                    await webcam.setup({ facingMode: "environment" });
+                }
             } catch (err) {
-                alert("Gagal akses kamera belakang. Coba cek izin browser/https.");
-                // Fallback ke kamera default kalau environment gagal
-                await webcam.setup(); 
+                alert("Gagal akses kamera. Pastikan izin diberikan.");
+                location.reload();
+                return;
             }
-            // --------------------------------------------------
 
+            // 4. Start & Transition to App Screen
             await webcam.play();
+            isRunning = true;
             window.requestAnimationFrame(loop);
 
-            // Bersihkan container lama kalau user klik tombol 2x
-            const webcamContainer = document.getElementById("webcam-container");
-            const delay = 500;
-            let lastTime = 0;
-            webcamContainer.innerHTML = ""; 
-            webcamContainer.appendChild(webcam.canvas);
-            
-            labelContainer = document.getElementById("label-container");
-            labelContainer.innerHTML = ""; // Reset label
-            for (let i = 0; i < maxPredictions; i++) {
-                let div = document.createElement("div");
-                div.className = "label-row";
-                div.innerHTML = `
-                    <span class="label-name">Wait...</span>
-                    <div class="bar-container"><div class="bar-fill" id="bar-${i}"></div></div>
-                    <span class="percentage" id="perc-${i}">0%</span>
-                `;
-                labelContainer.appendChild(div);
+            // Hide Intro, Show App
+            const intro = document.getElementById('intro-screen');
+            const app = document.getElementById('app-screen');
+            const resultPanel = document.getElementById('result-panel');
+
+            intro.style.opacity = '0';
+            setTimeout(() => {
+                intro.style.display = 'none';
+                app.style.display = 'flex';
+                
+                // Masukkan webcam ke wrapper
+                const wrapper = document.getElementById("webcam-wrapper");
+                wrapper.innerHTML = ""; // Clear
+                wrapper.appendChild(webcam.canvas); // Append Canvas
+                // Balikin overlay scan garis (karena ketimpa innerHTML clean)
+                const overlay = document.createElement('div');
+                overlay.className = 'scan-overlay';
+                overlay.innerHTML = '<div class="scan-line"></div>';
+                wrapper.appendChild(overlay);
+
+                // Setup Labels
+                setupLabels();
+                
+                // Munculkan panel hasil dari bawah
+                setTimeout(() => {
+                    resultPanel.style.transform = 'translateY(0)';
+                }, 100);
+
+            }, 500);
+        }
+
+        // --- PENCARI KAMERA (Logic Lama) ---
+        async function getBestBackCamera() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                stream.getTracks().forEach(track => track.stop());
+
+                const devices = await navigator.mediaDevices.enumerateDevices();
+                const videoDevices = devices.filter(d => d.kind === 'videoinput');
+                
+                let backCameras = videoDevices.filter(d => {
+                    const label = d.label.toLowerCase();
+                    return label.includes('back') || label.includes('belakang') || label.includes('environment');
+                });
+
+                if (backCameras.length === 0) backCameras = videoDevices;
+
+                const mainCameras = backCameras.filter(d => {
+                    const label = d.label.toLowerCase();
+                    return !label.includes('wide') && !label.includes('ultra') && !label.includes('0.5');
+                });
+
+                if (mainCameras.length > 0) return mainCameras[0].deviceId;
+                return null;
+            } catch (err) {
+                return null;
             }
         }
 
         async function loop(timestamp) {
             webcam.update(); 
-            
-            if (timestamp - lastTime > delay) {
+            if (timestamp - lastTime > PREDICTION_DELAY) {
                 await predict();
                 lastTime = timestamp;
             }
-            
-            window.requestAnimationFrame(loop);
+            if (isRunning) window.requestAnimationFrame(loop);
         }
 
         async function predict() {
             const prediction = await model.predict(webcam.canvas);
+            
+            // Urutkan hasil dari yang tertinggi (biar yg paling mungkin ada di atas)
+            // Tapi karena kita pakai elemen fix, kita update aja value-nya.
+            
             for (let i = 0; i < maxPredictions; i++) {
-                const className = prediction[i].className.replace(/_/g, " ");
-                const probability = prediction[i].probability.toFixed(2);
+                const rawName = prediction[i].className;
+                const cleanName = rawName.replace(/_/g, " "); // Hapus underscore
+                const probability = prediction[i].probability;
                 const percent = Math.round(probability * 100) + "%";
 
                 const row = labelContainer.childNodes[i];
-                row.querySelector(".label-name").innerText = className;
-                row.querySelector(".bar-fill").style.width = percent;
-                row.querySelector(".percentage").innerText = percent;
-
-                if (prediction[i].probability > 0.8) {
-                    row.querySelector(".bar-fill").style.backgroundColor = "#28a745";
+                
+                // Update Teks
+                row.querySelector(".plant-name").innerText = cleanName;
+                row.querySelector(".plant-perc").innerText = percent;
+                
+                // Update Bar Width
+                const barFill = row.querySelector(".bar-fill");
+                barFill.style.width = percent;
+                
+                // Dynamic Color Logic
+                if (probability > 0.8) {
+                    barFill.style.backgroundColor = "#00d26a"; // Hijau Terang (Yakin)
+                    row.querySelector(".plant-perc").style.color = "#00d26a";
+                    row.style.opacity = "1";
+                } else if (probability > 0.4) {
+                    barFill.style.backgroundColor = "#fbbf24"; // Kuning (Ragu)
+                    row.querySelector(".plant-perc").style.color = "#fbbf24";
+                    row.style.opacity = "0.8";
                 } else {
-                    row.querySelector(".bar-fill").style.backgroundColor = "#4CAF50";
+                    barFill.style.backgroundColor = "#64748b"; // Abu (Salah)
+                    row.querySelector(".plant-perc").style.color = "#64748b";
+                    row.style.opacity = "0.4"; // Redupkan yang gak cocok
                 }
             }
         }
 
-        // Cek apakah dibuka via HTTP biasa (bukan localhost/https)
-        if (location.protocol !== 'https:' && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') {
-            document.getElementById('https-warning').style.display = 'block';
+        function setupLabels() {
+            labelContainer = document.getElementById("label-container");
+            labelContainer.innerHTML = "";
+            
+            // Kita buat urutan elemen berdasarkan kelas model
+            for (let i = 0; i < maxPredictions; i++) {
+                let div = document.createElement("div");
+                div.className = "label-row";
+                div.innerHTML = `
+                    <div class="row-header">
+                        <span class="plant-name">Loading...</span>
+                        <span class="plant-perc">0%</span>
+                    </div>
+                    <div class="bar-bg">
+                        <div class="bar-fill"></div>
+                    </div>
+                `;
+                labelContainer.appendChild(div);
+            }
         }
     </script>
 </body>
