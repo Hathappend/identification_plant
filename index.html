@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test AR Tanaman (Kamera Belakang)</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #222; /* Gelap biar fokus ke kamera */
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            margin: 0;
+        }
+        h1 { margin-bottom: 10px; font-size: 1.2rem; }
+        
+        /* Container Kamera Responsif */
+        #webcam-container {
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            margin-bottom: 20px;
+            width: 100%;
+            max-width: 400px; /* Batas lebar di HP */
+            background: #000;
+            display: flex;
+            justify-content: center;
+        }
+        canvas {
+            width: 100% !important; /* Paksa canvas ngikutin lebar layar HP */
+            height: auto !important;
+        }
+
+        #label-container {
+            width: 100%;
+            max-width: 400px;
+            background: #333;
+            padding: 15px;
+            border-radius: 10px;
+            box-sizing: border-box;
+        }
+        .label-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        .label-name { width: 100px; font-size: 13px; }
+        .bar-container { flex-grow: 1; background: #555; height: 15px; border-radius: 8px; overflow: hidden; }
+        .bar-fill { height: 100%; background: #4CAF50; transition: width 0.2s; width: 0%; }
+        .percentage { width: 40px; text-align: right; font-size: 11px; margin-left: 5px; }
+        
+        button {
+            padding: 12px 25px; background-color: #007bff; color: white; border: none;
+            border-radius: 25px; font-size: 16px; cursor: pointer; margin-bottom: 20px;
+            width: 100%; max-width: 300px;
+        }
+        .warning {
+            background: #ff9800; color: black; padding: 10px; font-size: 12px;
+            border-radius: 5px; margin-bottom: 15px; text-align: center; display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>🌱 Deteksi Tanaman (Kamera Belakang)</h1>
+    
+    <div id="https-warning" class="warning">
+        ⚠️ PERHATIAN: Kamera mungkin tidak jalan jika dibuka lewat IP (http://192.168...).
+        Gunakan HTTPS (ngrok/vercel) atau localhost di laptop.
+    </div>
+
+    <button type="button" onclick="init()">📸 Buka Kamera</button>
+    
+    <div id="webcam-container"></div>
+    <div id="label-container"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest/dist/teachablemachine-image.min.js"></script>
+    
+    <script type="text/javascript">
+        const URL = "./";
+        let model, webcam, labelContainer, maxPredictions;
+
+        async function init() {
+            const modelURL = URL + "model.json";
+            const metadataURL = URL + "metadata.json";
+
+            try {
+                model = await tmImage.load(modelURL, metadataURL);
+                maxPredictions = model.getTotalClasses();
+            } catch (e) {
+                alert("Error: Model tidak ditemukan. Pastikan file json ada di folder yang sama.");
+                return;
+            }
+
+            // --- BAGIAN INI YANG DIUBAH UTK KAMERA BELAKANG ---
+            const flip = false; // JANGAN dicerminkan untuk kamera belakang
+            
+            // Atur ukuran awal (nanti di-resize CSS)
+            const width = 300;
+            const height = 300;
+            
+            webcam = new tmImage.Webcam(width, height, flip); 
+            
+            // Constraint khusus untuk meminta kamera belakang (environment)
+            try {
+                await webcam.setup({ facingMode: "environment" }); 
+            } catch (err) {
+                alert("Gagal akses kamera belakang. Coba cek izin browser/https.");
+                // Fallback ke kamera default kalau environment gagal
+                await webcam.setup(); 
+            }
+            // --------------------------------------------------
+
+            await webcam.play();
+            window.requestAnimationFrame(loop);
+
+            // Bersihkan container lama kalau user klik tombol 2x
+            const webcamContainer = document.getElementById("webcam-container");
+            webcamContainer.innerHTML = ""; 
+            webcamContainer.appendChild(webcam.canvas);
+            
+            labelContainer = document.getElementById("label-container");
+            labelContainer.innerHTML = ""; // Reset label
+            for (let i = 0; i < maxPredictions; i++) {
+                let div = document.createElement("div");
+                div.className = "label-row";
+                div.innerHTML = `
+                    <span class="label-name">Wait...</span>
+                    <div class="bar-container"><div class="bar-fill" id="bar-${i}"></div></div>
+                    <span class="percentage" id="perc-${i}">0%</span>
+                `;
+                labelContainer.appendChild(div);
+            }
+        }
+
+        async function loop() {
+            webcam.update();
+            await predict();
+            window.requestAnimationFrame(loop);
+        }
+
+        async function predict() {
+            const prediction = await model.predict(webcam.canvas);
+            for (let i = 0; i < maxPredictions; i++) {
+                const className = prediction[i].className.replace(/_/g, " ");
+                const probability = prediction[i].probability.toFixed(2);
+                const percent = Math.round(probability * 100) + "%";
+
+                const row = labelContainer.childNodes[i];
+                row.querySelector(".label-name").innerText = className;
+                row.querySelector(".bar-fill").style.width = percent;
+                row.querySelector(".percentage").innerText = percent;
+
+                if (prediction[i].probability > 0.8) {
+                    row.querySelector(".bar-fill").style.backgroundColor = "#28a745";
+                } else {
+                    row.querySelector(".bar-fill").style.backgroundColor = "#4CAF50";
+                }
+            }
+        }
+
+        // Cek apakah dibuka via HTTP biasa (bukan localhost/https)
+        if (location.protocol !== 'https:' && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') {
+            document.getElementById('https-warning').style.display = 'block';
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,454 @@
+{
+    "query": {
+        "project": "all",
+        "images": [
+            "c9e229c6d639bb5a45816bcaabcd2840"
+        ],
+        "organs": [
+            "auto"
+        ],
+        "includeRelatedImages": false,
+        "noReject": false,
+        "type": null
+    },
+    "predictedOrgans": [
+        {
+            "image": "c9e229c6d639bb5a45816bcaabcd2840",
+            "filename": "20260113_173117.jpg",
+            "organ": "leaf",
+            "score": 0.77997
+        }
+    ],
+    "language": "id",
+    "preferedReferential": "k-world-flora",
+    "bestMatch": "Pandanus amaryllifolius Roxb. ex Lindl.",
+    "results": [
+        {
+            "score": 0.57999,
+            "species": {
+                "scientificNameWithoutAuthor": "Pandanus amaryllifolius",
+                "scientificNameAuthorship": "Roxb. ex Lindl.",
+                "genus": {
+                    "scientificNameWithoutAuthor": "Pandanus",
+                    "scientificNameAuthorship": "",
+                    "scientificName": "Pandanus"
+                },
+                "family": {
+                    "scientificNameWithoutAuthor": "Pandanaceae",
+                    "scientificNameAuthorship": "",
+                    "scientificName": "Pandanaceae"
+                },
+                "commonNames": [
+                    "Pandan wangi",
+                    "Pandan rampeh"
+                ],
+                "scientificName": "Pandanus amaryllifolius Roxb. ex Lindl."
+            },
+            "gbif": {
+                "id": "9296315"
+            },
+            "powo": {
+                "id": "670690-1"
+            },
+            "iucn": {
+                "id": "200532776",
+                "category": "DD"
+            }
+        },
+        {
+            "score": 0.00909,
+            "species": {
+                "scientificNameWithoutAuthor": "Crinum asiaticum",
+                "scientificNameAuthorship": "L.",
+                "genus": {
+                    "scientificNameWithoutAuthor": "Crinum",
+                    "scientificNameAuthorship": "",
+                    "scientificName": "Crinum"
+                },
+                "family": {
+                    "scientificNameWithoutAuthor": "Amaryllidaceae",
+                    "scientificNameAuthorship": "",
+                    "scientificName": "Amaryllidaceae"
+                },
+                "commonNames": [
+                    "Bakong",
+                    "Bunga Bakung"
+                ],
+                "scientificName": "Crinum asiaticum L."
+            },
+            "gbif": {
+                "id": "2853796"
+            },
+            "powo": {
+                "id": "63796-1"
+            }
+        },
+        {
+            "score": 0.00385,
+            "species": {
+                "scientificNameWithoutAuthor": "Hymenocallis speciosa",
+                "scientificNameAuthorship": "(L.f. ex Salisb.) Salisb.",
+                "genus": {
+                    "scientificNameWithoutAuthor": "Hymenocallis",
+                    "scientificNameAuthorship": "",
+                    "scientificName": "Hymenocallis"
+                },
+                "family": {
+                    "scientificNameWithoutAuthor": "Amaryllidaceae",
+                    "scientificNameAuthorship": "",
+                    "scientificName": "Amaryllidaceae"
+                },
+                "commonNames": [],
+                "scientificName": "Hymenocallis speciosa (L.f. ex Salisb.) Salisb."
+            },
+            "gbif": {
+                "id": "2860247"
+            },
+            "powo": {
+                "id": "30010600-2"
+            }
+        },
+        {
+            "score": 0.00325,
+            "species": {
+                "scientificNameWithoutAuthor": "Pandanus dubius",
+                "scientificNameAuthorship": "Spreng.",
+                "genus": {
+                    "scientificNameWithoutAuthor": "Pandanus",
+                    "scientificNameAuthorship": "",
+                    "scientificName": "Pandanus"
+                },
+                "family": {
+                    "scientificNameWithoutAuthor": "Pandanaceae",
+                    "scientificNameAuthorship": "",
+                    "scientificName": "Pandanaceae"
+                },
+                "commonNames": [
+                    "Boku",
+                    "Haun Pantai",
+                    "Pung"
+                ],
+                "scientificName": "Pandanus dubius Spreng."
+            },
+            "gbif": {
+                "id": "5328028"
+            },
+            "powo": {
+                "id": "670916-1"
+            },
+            "iucn": {
+                "id": "178110739",
+                "category": "LC"
+            }
+        },
+        {
+            "score": 0.0021,
+            "species": {
+                "scientificNameWithoutAuthor": "Dracaena cochinchinensis",
+                "scientificNameAuthorship": "(Lour.) S.C.Chen",
+                "genus": {
+                    "scientificNameWithoutAuthor": "Dracaena",
+                    "scientificNameAuthorship": "",
+                    "scientificName": "Dracaena"
+                },
+                "family": {
+                    "scientificNameWithoutAuthor": "Asparagaceae",
+                    "scientificNameAuthorship": "",
+                    "scientificName": "Asparagaceae"
+                },
+                "commonNames": [],
+                "scientificName": "Dracaena cochinchinensis (Lour.) S.C.Chen"
+            },
+            "gbif": {
+                "id": "5304529"
+            },
+            "powo": {
+                "id": "534147-1"
+            },
+            "iucn": {
+                "id": "226418050",
+                "category": "LC"
+            }
+        },
+        {
+            "score": 0.00202,
+            "species": {
+                "scientificNameWithoutAuthor": "Stegolepis ferruginea",
+                "scientificNameAuthorship": "Baker",
+                "genus": {
+                    "scientificNameWithoutAuthor": "Stegolepis",
+                    "scientificNameAuthorship": "",
+                    "scientificName": "Stegolepis"
+                },
+                "family": {
+                    "scientificNameWithoutAuthor": "Rapateaceae",
+                    "scientificNameAuthorship": "",
+                    "scientificName": "Rapateaceae"
+                },
+                "commonNames": [],
+                "scientificName": "Stegolepis ferruginea Baker"
+            },
+            "gbif": {
+                "id": "5287536"
+            },
+            "powo": {
+                "id": "715321-1"
+            }
+        },
+        {
+            "score": 0.00151,
+            "species": {
+                "scientificNameWithoutAuthor": "Cordyline obtecta",
+                "scientificNameAuthorship": "(Graham) Baker",
+                "genus": {
+                    "scientificNameWithoutAuthor": "Cordyline",
+                    "scientificNameAuthorship": "",
+                    "scientificName": "Cordyline"
+                },
+                "family": {
+                    "scientificNameWithoutAuthor": "Asparagaceae",
+                    "scientificNameAuthorship": "",
+                    "scientificName": "Asparagaceae"
+                },
+                "commonNames": [],
+                "scientificName": "Cordyline obtecta (Graham) Baker"
+            },
+            "gbif": {
+                "id": "2766230"
+            },
+            "powo": {
+                "id": "533623-1"
+            }
+        },
+        {
+            "score": 0.00141,
+            "species": {
+                "scientificNameWithoutAuthor": "Hymenocallis littoralis",
+                "scientificNameAuthorship": "(Jacq.) Salisb.",
+                "genus": {
+                    "scientificNameWithoutAuthor": "Hymenocallis",
+                    "scientificNameAuthorship": "",
+                    "scientificName": "Hymenocallis"
+                },
+                "family": {
+                    "scientificNameWithoutAuthor": "Amaryllidaceae",
+                    "scientificNameAuthorship": "",
+                    "scientificName": "Amaryllidaceae"
+                },
+                "commonNames": [
+                    "Bakung"
+                ],
+                "scientificName": "Hymenocallis littoralis (Jacq.) Salisb."
+            },
+            "gbif": {
+                "id": "2860119"
+            },
+            "powo": {
+                "id": "30048918-2"
+            }
+        },
+        {
+            "score": 0.00123,
+            "species": {
+                "scientificNameWithoutAuthor": "Pandanus macrostigma",
+                "scientificNameAuthorship": "Martelli",
+                "genus": {
+                    "scientificNameWithoutAuthor": "Pandanus",
+                    "scientificNameAuthorship": "",
+                    "scientificName": "Pandanus"
+                },
+                "family": {
+                    "scientificNameWithoutAuthor": "Pandanaceae",
+                    "scientificNameAuthorship": "",
+                    "scientificName": "Pandanaceae"
+                },
+                "commonNames": [],
+                "scientificName": "Pandanus macrostigma Martelli"
+            },
+            "gbif": {
+                "id": "5534820"
+            },
+            "powo": {
+                "id": "671176-1"
+            }
+        },
+        {
+            "score": 0.00105,
+            "species": {
+                "scientificNameWithoutAuthor": "Trimezia gracilis",
+                "scientificNameAuthorship": "(Herb.) Christenh. & Byng",
+                "genus": {
+                    "scientificNameWithoutAuthor": "Trimezia",
+                    "scientificNameAuthorship": "",
+                    "scientificName": "Trimezia"
+                },
+                "family": {
+                    "scientificNameWithoutAuthor": "Iridaceae",
+                    "scientificNameAuthorship": "",
+                    "scientificName": "Iridaceae"
+                },
+                "commonNames": [],
+                "scientificName": "Trimezia gracilis (Herb.) Christenh. & Byng"
+            },
+            "gbif": {
+                "id": "10976814"
+            },
+            "powo": {
+                "id": "77182400-1"
+            }
+        }
+    ],
+    "version": "2025-10-08 (7.4)",
+    "otherResults": {
+        "genus": [
+            {
+                "score": 0.49624,
+                "genus": {
+                    "scientificName": "Pandanus",
+                    "family": {
+                        "scientificNameWithoutAuthor": "Pandanaceae",
+                        "scientificNameAuthorship": "",
+                        "scientificName": "Pandanaceae"
+                    },
+                    "commonNames": [
+                        "Screwpine",
+                        "Pandan",
+                        "Screw-pine"
+                    ]
+                },
+                "gbif": {
+                    "id": "8404076"
+                }
+            },
+            {
+                "score": 0.07503,
+                "genus": {
+                    "scientificName": "Hymenocallis",
+                    "family": {
+                        "scientificNameWithoutAuthor": "Amaryllidaceae",
+                        "scientificNameAuthorship": "",
+                        "scientificName": "Amaryllidaceae"
+                    },
+                    "commonNames": [
+                        "Spiderlily",
+                        "Spider-lily"
+                    ]
+                },
+                "gbif": {
+                    "id": "2860118"
+                }
+            },
+            {
+                "score": 0.03925,
+                "genus": {
+                    "scientificName": "Crinum",
+                    "family": {
+                        "scientificNameWithoutAuthor": "Amaryllidaceae",
+                        "scientificNameAuthorship": "",
+                        "scientificName": "Amaryllidaceae"
+                    },
+                    "commonNames": [
+                        "Swamplily"
+                    ]
+                },
+                "gbif": {
+                    "id": "2773870"
+                }
+            },
+            {
+                "score": 0.03304,
+                "genus": {
+                    "scientificName": "Trimezia",
+                    "family": {
+                        "scientificNameWithoutAuthor": "Iridaceae",
+                        "scientificNameAuthorship": "",
+                        "scientificName": "Iridaceae"
+                    },
+                    "commonNames": [
+                        "Trimezia"
+                    ]
+                },
+                "gbif": {
+                    "id": "2749633"
+                }
+            },
+            {
+                "score": 0.02737,
+                "genus": {
+                    "scientificName": "Stegolepis",
+                    "family": {
+                        "scientificNameWithoutAuthor": "Rapateaceae",
+                        "scientificNameAuthorship": "",
+                        "scientificName": "Rapateaceae"
+                    },
+                    "commonNames": []
+                }
+            }
+        ],
+        "family": [
+            {
+                "score": 0.63078,
+                "family": {
+                    "scientificName": "Pandanaceae",
+                    "commonNames": []
+                },
+                "gbif": {
+                    "id": "3737"
+                }
+            },
+            {
+                "score": 0.04728,
+                "family": {
+                    "scientificName": "Asparagaceae",
+                    "commonNames": [
+                        "Asparagus family",
+                        "Agave And Allies",
+                        "Asparagus Family"
+                    ]
+                },
+                "gbif": {
+                    "id": "7683"
+                }
+            },
+            {
+                "score": 0.0259,
+                "family": {
+                    "scientificName": "Orchidaceae",
+                    "commonNames": [
+                        "Orchid",
+                        "Orchid Family",
+                        "Orchids"
+                    ]
+                },
+                "gbif": {
+                    "id": "7689"
+                }
+            },
+            {
+                "score": 0.02579,
+                "family": {
+                    "scientificName": "Asphodelaceae",
+                    "commonNames": [
+                        "Asphodel family",
+                        "Asphodel Family",
+                        "Asphodels"
+                    ]
+                },
+                "gbif": {
+                    "id": "4259209"
+                }
+            },
+            {
+                "score": 0.01482,
+                "family": {
+                    "scientificName": "Doryanthaceae",
+                    "commonNames": []
+                },
+                "gbif": {
+                    "id": "3726"
+                }
+            }
+        ]
+    },
+    "remainingIdentificationRequests": 498
+}
